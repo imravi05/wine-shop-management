@@ -88,39 +88,13 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-F00 uppercase tracking-wider">Username</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">U-001</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">admin_jane</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                        Admin
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-user-btn" data-id="1" data-username="admin_jane" data-role="Admin">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 delete-user-btn" data-id="1">Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">U-002</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">staff_bob</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        Staff
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-user-btn" data-id="2" data-username="staff_bob" data-role="Staff">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900 delete-user-btn" data-id="2">Delete</button>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <tbody id="user-table-body" class="bg-white divide-y divide-gray-200">
+                            </tbody>
                     </table>
                 </div>
             </section>
@@ -131,89 +105,164 @@
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
+            const userForm = document.getElementById('user-form');
+            const userFormTitle = document.getElementById('user-form-title');
+            const userTableBody = document.getElementById('user-table-body');
 
             // Handle mobile menu toggle
             mobileMenuBtn.addEventListener('click', function() {
                 mobileMenu.classList.toggle('hidden');
             });
 
-            // --- Admin Page: Edit/Clear Button Functionality ---
-            const userForm = document.getElementById('user-form');
-            const userFormTitle = document.getElementById('user-form-title');
-
+            // --- Form Utilities ---
             function clearUserForm() {
                 userForm.reset();
                 document.getElementById('user_id').value = '';
+                document.getElementById('user-password').placeholder = "Leave blank to keep unchanged";
                 userFormTitle.textContent = 'Add New User';
             }
 
             document.getElementById('user-form-clear').addEventListener('click', clearUserForm);
 
-            // Handle "Edit" and "Delete" button clicks
-            document.querySelector('#admin-page').addEventListener('click', function(e) {
+            // --- API Calls ---
+
+            // 1. READ: Fetch all users and render them
+            async function fetchAndRenderUsers() {
+                try {
+                    const response = await fetch('/api/users');
+                    if (!response.ok) throw new Error('Failed to fetch users');
+                    const { data } = await response.json();
+
+                    userTableBody.innerHTML = ''; // Clear existing rows
+
+                    if (!data || data.length === 0) {
+                        userTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No users found.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(user => {
+                        const roleClass = user.role === 'Admin' 
+                            ? 'bg-red-100 text-red-800' 
+                            : 'bg-green-100 text-green-800';
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.user_id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.username}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${roleClass}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-user-btn" 
+                                    data-id="${user.user_id}" 
+                                    data-username="${user.username}" 
+                                    data-role="${user.role}">Edit</button>
+                                <button class="text-red-600 hover:text-red-900 delete-user-btn" data-id="${user.user_id}">Delete</button>
+                            </td>
+                        `;
+                        userTableBody.appendChild(row);
+                    });
+
+                } catch (error) {
+                    console.error('Error fetching users:', error.message);
+                    userTableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-500">Error loading data.</td></tr>`;
+                }
+            }
+
+            // 2. CREATE/UPDATE: Handle user form submission
+            async function handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(userForm);
+                const data = Object.fromEntries(formData.entries());
+                
+                let url = '/api/users';
+                let method = 'POST';
+
+                if (data.user_id) {
+                    url = `/api/users/${data.user_id}`;
+                    method = 'PUT';
+                    // If password field is empty during an update, don't send it
+                    if (data.password === '') {
+                        delete data.password;
+                    }
+                } else if (!data.password) {
+                    // Password is required for new users
+                    alert('Password is required for new users.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        throw new Error(errData.error || 'Failed to save user');
+                    }
+                    
+                    clearUserForm();
+                    fetchAndRenderUsers(); // Refresh the table
+
+                } catch (error) {
+                    console.error('Error submitting form:', error.message);
+                    alert('Error: ' + error.message);
+                }
+            }
+
+            userForm.addEventListener('submit', handleFormSubmit);
+
+            // 3. EDIT/DELETE: Handle clicks on the table buttons
+            document.querySelector('#admin-page').addEventListener('click', async function(e) {
+                
+                // Handle EDIT button
                 if (e.target.classList.contains('edit-user-btn')) {
                     const btn = e.target;
                     document.getElementById('user_id').value = btn.dataset.id;
                     document.getElementById('user-username').value = btn.dataset.username;
                     document.getElementById('user-role').value = btn.dataset.role;
                     document.getElementById('user-password').value = ''; 
+                    document.getElementById('user-password').placeholder = "Leave blank to keep unchanged";
                     
                     userFormTitle.textContent = 'Edit User: ' + btn.dataset.username;
                     userForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
 
+                // Handle DELETE button
                 if (e.target.classList.contains('delete-user-btn')) {
                     const id = e.target.dataset.id;
                     const userName = e.target.closest('tr').querySelector('td:nth-child(2)').textContent;
                     
-                    console.log(`Attempting to delete user ID: ${id} (${userName})`);
+                    if (!confirm(`Are you sure you want to delete user ${userName}?`)) {
+                        return;
+                    }
                     
-                    // ... (Real fetch API DELETE call would go here) ...
+                    try {
+                        const response = await fetch(`/api/users/${id}`, { method: 'DELETE' });
 
-                    // For demo, just remove the row
-                    e.target.closest('tr').remove();
-                    console.log('Demo: Row removed from UI.');
+                        if (!response.ok) {
+                            const errData = await response.json();
+                            throw new Error(errData.error || 'Failed to delete user');
+                        }
+
+                        fetchAndRenderUsers(); // Refresh the table
+                        
+                    } catch (error) {
+                        console.error('Error deleting user:', error.message);
+                        alert('Error: ' + error.message);
+                    }
                 }
             });
 
-            // --- Form Submissions with fetch() ---
-            async function handleFormSubmit(e) {
-                e.preventDefault();
-                
-                const form = e.target;
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-                
-                let url = '';
-                let method = 'POST';
-
-                const userId = data.user_id;
-                if (userId && data.password === '') {
-                    delete data.password;
-                }
-                if (userId) {
-                    url = `/api/users/${userId}`;
-                    method = 'PUT';
-                } else {
-                    url = '/api/users';
-                    method = 'POST';
-                }
-
-                try {
-                    console.log(`Attempting ${method} request to ${url} with data:`, data);
-
-                    // ... (Real fetch call would go here) ...
-                    
-                    console.log('Demo successful. In a real app, this would be an API call.');
-                    clearUserForm();
-                    console.log('In a real app, you would refresh the table data now.');
-
-                } catch (error) {
-                    console.error('Error submitting form:', error.message);
-                }
-            }
-
-            document.getElementById('user-form').addEventListener('submit', handleFormSubmit);
+            // --- Initial Load ---
+            fetchAndRenderUsers();
         });
     </script>
 </body>

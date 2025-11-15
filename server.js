@@ -13,11 +13,14 @@ const PORT = process.env.PORT || 3000;
 
 // --- Middleware ---
 // Enable Cross-Origin Resource Sharing (CORS)
-// This is essential for your frontend to talk to this backend
 app.use(cors());
 
 // Enable built-in JSON parsing
 app.use(express.json());
+
+// --- THIS IS THE NEW LINE ---
+// Serve all static files (html, etc.) from the 'public' directory
+app.use(express.static('public'));
 
 // --- Mount Routes ---
 // When a request comes to /api/sales, use salesRoutes
@@ -29,7 +32,9 @@ app.use('/api/users', userRoutes);
 
 // --- Root Route ---
 app.get('/', (req, res) => {
-    res.json({ message: "Welcome to the Vintage Vines API. The server is running!" });
+    // This will now be handled by express.static, but we can redirect
+    // to a default page, like sales.html.
+    res.redirect('/sales.html');
 });
 
 // --- Start Server ---
