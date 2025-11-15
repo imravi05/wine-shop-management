@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Vintage Vines</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="min-h-screen">
+        <header class="bg-white shadow-md">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-2xl font-bold text-indigo-600">Vintage Vines</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="sales.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Sales</a>
+                            <a href="stock.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Stock</a>
+                            <a href="admin.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium bg-gray-200 text-gray-900">Admin</a>
+                        </div>
+                    </div>
+                    <div class="sm:hidden">
+                        <button id="mobile-menu-btn" class="text-gray-700 p-2 rounded-md hover:bg-gray-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="mobile-menu" class="sm:hidden hidden space-y-1 pb-3">
+                    <a href="sales.html" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-200">Sales</a>
+                    <a href="stock.html" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-200">Stock</a>
+                    <a href="admin.html" class="nav-link block px-3 py-2 rounded-md text-base font-medium bg-gray-200 text-gray-900">Admin</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <section id="admin-page">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Admin Panel</h1>
+
+                <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                    <h2 class="text-xl font-semibold mb-4" id="user-form-title">Add New User</h2>
+                    <form id="user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="hidden" id="user_id" name="user_id">
+                        <div>
+                            <label for="user-username" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input type="text" id="user-username" name="username" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="user-password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <input type="password" id="user-password" name="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Leave blank to keep unchanged">
+                        </div>
+                        <div>
+                            <label for="user-role" class="block text-sm font-medium text-gray-700">Role</label>
+                            <select id="user-role" name="role" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="Staff">Staff</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3 text-right space-x-2">
+                             <button type="button" id="user-form-clear" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Clear
+                            </button>
+                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Save User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                 <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                    <h2 class="text-xl font-semibold mb-4">Manage Users</h2>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-F00 uppercase tracking-wider">Username</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">U-001</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">admin_jane</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        Admin
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-user-btn" data-id="1" data-username="admin_jane" data-role="Admin">Edit</button>
+                                    <button class="text-red-600 hover:text-red-900 delete-user-btn" data-id="1">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">U-002</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">staff_bob</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Staff
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-user-btn" data-id="2" data-username="staff_bob" data-role="Staff">Edit</button>
+                                    <button class="text-red-600 hover:text-red-900 delete-user-btn" data-id="2">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            // Handle mobile menu toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Admin Page: Edit/Clear Button Functionality ---
+            const userForm = document.getElementById('user-form');
+            const userFormTitle = document.getElementById('user-form-title');
+
+            function clearUserForm() {
+                userForm.reset();
+                document.getElementById('user_id').value = '';
+                userFormTitle.textContent = 'Add New User';
+            }
+
+            document.getElementById('user-form-clear').addEventListener('click', clearUserForm);
+
+            // Handle "Edit" and "Delete" button clicks
+            document.querySelector('#admin-page').addEventListener('click', function(e) {
+                if (e.target.classList.contains('edit-user-btn')) {
+                    const btn = e.target;
+                    document.getElementById('user_id').value = btn.dataset.id;
+                    document.getElementById('user-username').value = btn.dataset.username;
+                    document.getElementById('user-role').value = btn.dataset.role;
+                    document.getElementById('user-password').value = ''; 
+                    
+                    userFormTitle.textContent = 'Edit User: ' + btn.dataset.username;
+                    userForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                if (e.target.classList.contains('delete-user-btn')) {
+                    const id = e.target.dataset.id;
+                    const userName = e.target.closest('tr').querySelector('td:nth-child(2)').textContent;
+                    
+                    console.log(`Attempting to delete user ID: ${id} (${userName})`);
+                    
+                    // ... (Real fetch API DELETE call would go here) ...
+
+                    // For demo, just remove the row
+                    e.target.closest('tr').remove();
+                    console.log('Demo: Row removed from UI.');
+                }
+            });
+
+            // --- Form Submissions with fetch() ---
+            async function handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const form = e.target;
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                let url = '';
+                let method = 'POST';
+
+                const userId = data.user_id;
+                if (userId && data.password === '') {
+                    delete data.password;
+                }
+                if (userId) {
+                    url = `/api/users/${userId}`;
+                    method = 'PUT';
+                } else {
+                    url = '/api/users';
+                    method = 'POST';
+                }
+
+                try {
+                    console.log(`Attempting ${method} request to ${url} with data:`, data);
+
+                    // ... (Real fetch call would go here) ...
+                    
+                    console.log('Demo successful. In a real app, this would be an API call.');
+                    clearUserForm();
+                    console.log('In a real app, you would refresh the table data now.');
+
+                } catch (error) {
+                    console.error('Error submitting form:', error.message);
+                }
+            }
+
+            document.getElementById('user-form').addEventListener('submit', handleFormSubmit);
+        });
+    </script>
+</body>
+</html>

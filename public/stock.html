@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock - Vintage Vines</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="min-h-screen">
+        <header class="bg-white shadow-md">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-2xl font-bold text-indigo-600">Vintage Vines</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="sales.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Sales</a>
+                            <a href="stock.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium bg-gray-200 text-gray-900">Stock</a>
+                            <a href="admin.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Admin</a>
+                        </div>
+                    </div>
+                    <div class="sm:hidden">
+                        <button id="mobile-menu-btn" class="text-gray-700 p-2 rounded-md hover:bg-gray-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="mobile-menu" class="sm:hidden hidden space-y-1 pb-3">
+                    <a href="sales.html" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-200">Sales</a>
+                    <a href="stock.html" class="nav-link block px-3 py-2 rounded-md text-base font-medium bg-gray-200 text-gray-900">Stock</a>
+                    <a href="admin.html" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-200">Admin</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <section id="stock-page">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Stock Management</h1>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                    <h2 class="text-xl font-semibold mb-4" id="stock-form-title">Add New Wine</h2>
+                    <form id="stock-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <input type="hidden" id="wine_id" name="wine_id">
+                        <div>
+                            <label for="wine-name" class="block text-sm font-medium text-gray-700">Wine Name</label>
+                            <input type="text" id="wine-name" name="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Chardonnay 2022">
+                        </div>
+                        <div>
+                            <label for="wine-type" class="block text-sm font-medium text-gray-700">Type</label>
+                            <select id="wine-type" name="type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="Red">Red</option>
+                                <option value="White">White</option>
+                                <option value="Rosé">Rosé</option>
+                                <option value="Sparkling">Sparkling</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="wine-price" class="block text-sm font-medium text-gray-700">Price ($)</label>
+                            <input type="number" id="wine-price" name="price" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="25.00">
+                        </div>
+                        <div>
+                            <label for="wine-stock" class="block text-sm font-medium text-gray-700">Quantity in Stock</label>
+                            <input type="number" id="wine-stock" name="stock" min="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="100">
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-4 text-right space-x-2">
+                            <button type="button" id="stock-form-clear" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Clear
+                            </button>
+                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Save Wine
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                    <h2 class="text-xl font-semibold mb-4">Current Inventory</h2>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wine ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">W-001</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Cabernet Sauvignon 2020</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Red</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$25.00</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">150</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-stock-btn" data-id="1" data-name="Cabernet Sauvignon 2020" data-type="Red" data-price="25.00" data-stock="150">Edit</button>
+                                    <button class="text-red-600 hover:text-red-900 delete-stock-btn" data-id="1">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">W-002</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Chardonnay 2022</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">White</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$22.50</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">120</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-stock-btn" data-id="2" data-name="Chardonnay 2022" data-type="White" data-price="22.50" data-stock="120">Edit</button>
+                                    <button class="text-red-600 hover:text-red-900 delete-stock-btn" data-id="2">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            // Handle mobile menu toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Stock Page: Edit/Clear Button Functionality ---
+            const stockForm = document.getElementById('stock-form');
+            const stockFormTitle = document.getElementById('stock-form-title');
+            
+            function clearStockForm() {
+                stockForm.reset(); 
+                document.getElementById('wine_id').value = '';
+                stockFormTitle.textContent = 'Add New Wine';
+            }
+
+            document.getElementById('stock-form-clear').addEventListener('click', clearStockForm);
+
+            // Handle "Edit" and "Delete" button clicks
+            document.querySelector('#stock-page').addEventListener('click', function(e) {
+                if (e.target.classList.contains('edit-stock-btn')) {
+                    const btn = e.target;
+                    document.getElementById('wine_id').value = btn.dataset.id;
+                    document.getElementById('wine-name').value = btn.dataset.name;
+                    document.getElementById('wine-type').value = btn.dataset.type;
+                    document.getElementById('wine-price').value = btn.dataset.price;
+                    document.getElementById('wine-stock').value = btn.dataset.stock;
+                    
+                    stockFormTitle.textContent = 'Edit Wine: ' + btn.dataset.name;
+                    stockForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                if (e.target.classList.contains('delete-stock-btn')) {
+                    const id = e.target.dataset.id;
+                    const wineName = e.target.closest('tr').querySelector('td:nth-child(2)').textContent;
+                    
+                    console.log(`Attempting to delete wine ID: ${id} (${wineName})`);
+                    
+                    // ... (Real fetch API DELETE call would go here) ...
+                    
+                    // For demo, just remove the row
+                    e.target.closest('tr').remove();
+                    console.log('Demo: Row removed from UI.');
+                }
+            });
+
+            // --- Form Submissions with fetch() ---
+            async function handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const form = e.target;
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                let url = '';
+                let method = 'POST';
+
+                const wineId = data.wine_id;
+                if (wineId) {
+                    url = `/api/wines/${wineId}`;
+                    method = 'PUT';
+                } else {
+                    url = '/api/wines';
+                    method = 'POST';
+                }
+
+                try {
+                    console.log(`Attempting ${method} request to ${url} with data:`, data);
+
+                    // ... (Real fetch call would go here) ...
+
+                    console.log('Demo successful. In a real app, this would be an API call.');
+                    clearStockForm();
+                    console.log('In a real app, you would refresh the table data now.');
+
+                } catch (error) {
+                    console.error('Error submitting form:', error.message);
+                }
+            }
+
+            document.getElementById('stock-form').addEventListener('submit', handleFormSubmit);
+        });
+    </script>
+</body>
+</html>
